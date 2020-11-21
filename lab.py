@@ -1,55 +1,54 @@
 # lab.py
 #
 # author: Stefan Harmeling
-# date:   2019-03-22
+# date:   2020-06-30
 #
 # Goal: easy-to-use functions (inspired by matlab)
-#       based on numpy
+#       based on pytorch (and not numpy)
 
-## scipy
-from scipy.special import erf, erfinv
+## default stuff to make you feel comfy
+from torch import zeros, ones, randn, rand, arange, stack, cat, linspace, zeros_like, roll, linspace
+from torch import tensor, get_default_dtype
+from torch import log, exp, norm, sqrt, norm, sqrt, exp
+from torch.fft import fft, ifft, fftn, ifftn, rfft, irfft
+from math import pi
 
-## numpy
-import numpy as np
-from numpy        import *
-from numpy.fft    import fft2, ifft2
-def rand(*args):
-    if len(args) == 1 and iterable(args[0]): # allows rand([3,4])
-        return np.random.rand(*args[0])      # allows rand(3,4)
-    return np.random.rand(*args)
-def randn(*args):
-    if len(args) == 1 and iterable(args[0]):
-        return np.random.randn(*args[0])  # allows randn([3,4])
-    return np.random.randn(*args)         # allows randn(3,4)
-def ones(*args):
-    if len(args) == 1:
-        return np.ones(args[0])   # allows ones([3,4])
-    return np.ones(args)          # allow ones(3,4)
-def zeros(*args):
-    if len(args) == 1:
-        return np.zeros(args[0])  # allows zeros([3,4])
-    return np.zeros(args)         # allow zeros(3,4)
+## more missing functions
+def fft_shift(x):
+    # shift the zero frequency into the center
+    return x.roll([i//2 for i in x.shape], list(range(x.dim())))
 
-## matplotlib
+## flipping the phase
+def phase_flip2(p):
+    # flips the phase such that p + phase_flip(p) == 0
+    return p.flip([0,1]).roll([1,1],[0,1])
+
+def phase_flip(p):
+    # flips the phase such that p + phase_flip(p) == 0
+    d = p.dim()
+    dims = list(range(d))
+    return p.flip(dims).roll(d*[1], dims)
+
+
+## useful for loading simple files with numbers
+from numpy import loadtxt
+
+# plotting matplotlib
+import matplotlib
+matplotlib.use("Qt5Agg")   # comment this out for notebook
 from matplotlib.pyplot import *
-# ion, figure, plot, axes, hist, imshow, plot, title, xlabel, ylabel, draw, pause, clf, subplot, cla, colorbar, gcf, gca, savefig, close, xlim, ylim
 ion()       # switch on interactive plotting
-###from matplotlib import rc
-###rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
-##### for Palatino and other serif fonts use:
-####rc('font',**{'family':'serif','serif':['Palatino']})
-###rc('text', usetex=True)
 from matplotlib.patches import Circle
 
-## debugger
+# debugger
 import pdb
 keyboard = pdb.set_trace     # matlab style "keyboard()" for debugging
 
-## os
+# os
 import os
 pwd = os.getcwd
 
-## subprocess
+# subprocess
 import subprocess
 def ls(args=None):
     if args is None:
@@ -59,9 +58,9 @@ def ls(args=None):
 #def open(args):
 #    subprocess.run(["open", args])
 
-### more tools!
+# more tools!
     
-## plotting discontinuous functions
+# plotting discontinuous functions
 def plotdis(x, y, xs, ys0, ys1):
     # xs, ys0, ys1 are equal sized list
     # e.g. xs[0] ys0[0] a circle
@@ -73,7 +72,7 @@ def plotdis(x, y, xs, ys0, ys1):
     plot(xs, ys0, 'o', fillstyle='none', color='orange')
     plot(xs, ys1, 'o', fillstyle='full', color='orange')
 
-## imshow and show value
+# imshow and show value
 def imshowvalue(a):
     imshow(a)
     sa = shape(a)
@@ -82,9 +81,11 @@ def imshowvalue(a):
             if a[j][i] > 0.0:
                 text(i, j, a[j][i], horizontalalignment='center', fontsize=5)
 
-### circular convolution
-#def cnv2(x, a):
-#    # 'x' is image, 'a' is filter
-#    return real(ifft2(fft2(x) * fft2(a, x.shape)))
-#def cnv2tp(x, a):
-#    return real(ifft2(fft2(x) * fft2(a, x.shape)))
+## useful images
+def barbara():     return tensor(imread('images/barbara.png'),     dtype=float)
+def boat():        return tensor(imread('images/boat.png'),        dtype=float)
+def cameraman():   return tensor(imread('images/cameraman.tif'),   dtype=float)
+def fingerprint(): return tensor(imread('images/fingerprint.png'), dtype=float)
+def house():       return tensor(imread('images/house.png'),       dtype=float)
+def lena():        return tensor(imread('images/lena.png'),        dtype=float)
+def peppers256():  return tensor(imread('images/peppers256.png'),  dtype=float)
