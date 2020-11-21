@@ -19,9 +19,9 @@ def fft_shift(x):
     return x.roll([i//2 for i in x.shape], list(range(x.dim())))
 
 ## flipping the phase
-def phase_flip2(p):
-    # flips the phase such that p + phase_flip(p) == 0
-    return p.flip([0,1]).roll([1,1],[0,1])
+#def phase_flip2(p):
+#    # flips the phase such that p + phase_flip(p) == 0
+#    return p.flip([0,1]).roll([1,1],[0,1])
 
 def phase_flip(p):
     # flips the phase such that p + phase_flip(p) == 0
